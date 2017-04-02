@@ -88,13 +88,13 @@ export class AppComponent {
     let zoom = window.devicePixelRatio;
     let ratio = width / height;
 
-    // this.camera = new THREE.PerspectiveCamera(25, ratio, 1, 5000);
+    this.camera = new THREE.PerspectiveCamera(25, ratio, 1, 5000);
 
     const cameraFactor = 60;
 
-    this.camera = new THREE.OrthographicCamera(-width / cameraFactor, width / cameraFactor, height / cameraFactor, -height / cameraFactor, 0, 100);
+    // this.camera = new THREE.OrthographicCamera(-width / cameraFactor, width / cameraFactor, height / cameraFactor, -height / cameraFactor, 0, 100);
 
-    this.camera.position.set(0, 0, 1);;
+    this.camera.position.set(0, 0, 55);;
 
     this.raycaster = new THREE.Raycaster();
 
@@ -191,7 +191,7 @@ export class AppComponent {
         let svgPath = parsePath(svg);
         let rawGeometry = svgMesh3d(svgPath, {
           // delaunay: false,
-          scale: 0.1,
+          scale: 1,
           simplify: 0.01
         });
         // debugger;
@@ -293,8 +293,8 @@ export class AppComponent {
       this.mouse = new THREE.Vector2();
     }
     event.preventDefault();
-    this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1.055;
-    this.mouse.y = - (event.clientY / window.innerHeight) * 2 + 1.055;
+    this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    this.mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
 
     this.mouseSpeed.x = event.movementX;
     this.mouseSpeed.y = event.movementY;
