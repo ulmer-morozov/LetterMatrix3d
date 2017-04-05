@@ -157,16 +157,10 @@ export class AppComponent {
     const fullWidth = columnCount * this.cubeWidth + (columnCount - 1) * this.gap;
     const fullHeight = rowCount * this.cubeHeight + (rowCount - 1) * this.gap;
 
-
-    // var light = new THREE.DirectionalLight(0xffffff, 1);
-    // light.position.set(1, 1, 1).normalize();
-    // this.scene.add(light);
-
     let loadedCount = 0;
     let currentPos = 0;
 
     let loadComplete = () => {
-      // debugger;
 
       for (let i = 0; i < columnCount; i++) {
         for (let j = 0; j < rowCount; j++) {
@@ -235,53 +229,13 @@ export class AppComponent {
           else
             loadComplete();
         }
-
-
       });
     };
 
     loadSymbol(false);
-    // }
-
-    // ];
-
-    // loadSvg('assets/images/letter_G.svg', (err, svg): void => {
-    //   if (err)
-    //     throw err
-    //
-    //   let svgPath = parsePath(svg)
-    //   let rawGeometry = svgMesh3d(svgPath, {
-    //     // delaunay: false,
-    //     scale: 1,
-    //     simplify: 0.01
-    //   });
-    //   // debugger;
-    //
-    //   let complexGeometry: THREE.Geometry = Complex(rawGeometry);
-    //   let material = new THREE.MeshNormalMaterial({ wireframe: false });
-    //   material.side = THREE.BackSide;
-    //
-    //   let complexMesh = new THREE.Mesh(complexGeometry, material);
-    //   // complexMesh.position.z = 50;
-    //   this.scene.add(complexMesh);
-    // })
   }
 
-  // loadingFinished = () => {
-  //   let normalMaterial = new THREE.MeshNormalMaterial();
-  //   let wireframeMaterial = new THREE.MeshNormalMaterial({ wireframe: true });
-  //
-  //   this.render();
-  // }
-
-  // getRandomLetterGeometry = (): THREE.Geometry => {
-  //   let position = Math.round(Math.random() * this.geometries.length);
-  //   let geometry = ;
-  //   return geometry;
-  // }
-
   createPlateMesh = (): Plate => {
-    // position = position % this.geometries.length;
     let position = Math.round(Math.random() * (this.geometries.length - 1));
 
     let frontLetterGeometry = this.geometries[position];
@@ -342,26 +296,6 @@ export class AppComponent {
 
     this.mouseSpeed.x = event.movementX;
     this.mouseSpeed.y = event.movementY;
-
-    // console.log(event.movementX, event.movementY);
-    //
-    // var vector = new THREE.Vector3();
-    //
-    // vector.set(
-    //   (event.clientX / window.innerWidth) * 2 - 1,
-    //   - (event.clientY / window.innerHeight) * 2 + 1,
-    //   0.5);
-    //
-    // vector.unproject(this.camera);
-    //
-    // var dir = vector.sub(this.camera.position).normalize();
-    // var distance = - this.camera.position.z / dir.z;
-    //
-    // var pos = this.camera.position.clone().add(dir.multiplyScalar(distance));
-    // debugger;
-
-    // this.mouse.x = pos.x;
-    // this.mouse.y = pos.y;
   }
 
   onTouchStart = (event: TouchEvent) => {
@@ -404,10 +338,6 @@ export class AppComponent {
     let maxPlateRotation = 220;
 
     let speedX = this.mouseSpeed.x;
-
-    // if (speedX != 0)
-    //   debugger;
-
     let sign = Math.sign(this.mouseSpeed.x);
 
     let rotationAmplitude = Math.abs(speedX * zoomLevel);
