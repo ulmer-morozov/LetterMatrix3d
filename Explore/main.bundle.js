@@ -157,8 +157,8 @@ var AppComponent = (function () {
             };
             var loadingComplete = function (response) {
                 var data = response.json();
-                var letterGeomInComplexes = data.letterGeomInComplexes;
-                var italicLetterGeomInComplexes = data.italicLetterGeomInComplexes;
+                var letterGeomInComplexes = data.italicLetterGeomInComplexes;
+                var italicLetterGeomInComplexes = data.letterGeomInComplexes;
                 for (var j = 0; j < letterGeomInComplexes.length; j++) {
                     var regularComplexGeometry = letterGeomInComplexes[j];
                     var italicComplexGeometry = italicLetterGeomInComplexes[j];

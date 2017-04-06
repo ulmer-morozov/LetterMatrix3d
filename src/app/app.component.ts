@@ -151,8 +151,8 @@ export class AppComponent {
     let loadingComplete = (response: Response): void => {
       let data = response.json();
 
-      let letterGeomInComplexes: any[] = data.letterGeomInComplexes;
-      let italicLetterGeomInComplexes: any[] = data.italicLetterGeomInComplexes;
+      let letterGeomInComplexes: any[] = data.italicLetterGeomInComplexes;
+      let italicLetterGeomInComplexes: any[] = data.letterGeomInComplexes;
 
       for (let j = 0; j < letterGeomInComplexes.length; j++) {
         let regularComplexGeometry = letterGeomInComplexes[j];
