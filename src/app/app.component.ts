@@ -1,4 +1,5 @@
 import { Component, ViewChild, ElementRef} from '@angular/core';
+import { Http, Response, Headers, RequestOptions } from '@angular/http';
 import * as THREE from 'three';
 
 import { Plate } from "./Plate";
@@ -68,10 +69,12 @@ export class AppComponent {
   private plateMaterial: THREE.Material;
   private plateCubeGeometry: THREE.Geometry;
 
-  private availableLetters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZабвгдеёжзийклмнопрстуфхцчшщъыьэюяАБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ";
-  // private availableLetters = "abcdefghijklmnopqrstuvwxyzабвгдеёжзийклмнопрстуфхцчшщъыьэюя";
+  private canvasWidth: number;
+  private canvasHeight: number;
 
-  constructor() {
+  private availableLetters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZабвгдеёжзийклмнопрстуфхцчшщъыьэюяАБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ";
+
+  constructor(private http: Http) {
 
   }
 
@@ -84,8 +87,8 @@ export class AppComponent {
 
     let showHelpers = false;
 
-    let width = window.innerWidth;
-    let height = window.innerHeight;
+    this.canvasWidth = window.innerWidth;
+    this.canvasHeight = window.innerHeight;
 
     this.scene = new THREE.Scene();
 
@@ -94,12 +97,11 @@ export class AppComponent {
     }
 
     let zoom = window.devicePixelRatio;
-    let ratio = width / height;
+    let ratio = this.canvasWidth / this.canvasHeight;
 
     this.camera = new THREE.PerspectiveCamera(25, ratio, 1, 5000);
 
-    const cameraFactor = 60;
-
+    // const cameraFactor = 60;
     // this.camera = new THREE.OrthographicCamera(-width / cameraFactor, width / cameraFactor, height / cameraFactor, -height / cameraFactor, 0, 100);
 
     this.camera.position.set(0, 0, 55);;
@@ -109,31 +111,25 @@ export class AppComponent {
     this.renderer = new THREE.WebGLRenderer
       ({
         antialias: true,
-        // alpha: true,
-        // clearAlpha: 0.5,
         canvas: this.canvas
       });
 
-    // this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-
-    this.renderer.setSize(zoom * width, zoom * height, false);
-    // this.renderer.setClearColor(0xfafafa, 1);
-
-    // this.renderer.gammaInput = true;
-    // this.renderer.gammaOutput = true;
-
+    this.renderer.setSize(zoom * this.canvasWidth, zoom * this.canvasHeight, false);
     this.renderer.shadowMap.enabled = false;
-    // this.renderer.shadowMapDebug = true;
-
-    // renderer.shadowMapSoft = true;
-    // this.renderer.shadowMap.type = THREE.PCFShadowMap;
 
     // Управление мышкой
     this.controls = new OrbitControls(this.camera, this.canvas);
     this.controls.enabled = !this.isMobile();
 
     this.plateCubeGeometry = new THREE.CubeGeometry(this.cubeWidth, this.cubeHeight, this.cubeThick);
+    this.prepareMaterials();
 
+    this.loadAdaptedGeometries();
+
+    // this.loadSvgGeometries();
+  }
+
+  prepareMaterials = (): void => {
     this.plateMaterial = new THREE.MultiMaterial([
       new THREE.MeshBasicMaterial({ color: this.sideColor }),
       new THREE.MeshBasicMaterial({ color: this.sideColor }),
@@ -145,9 +141,52 @@ export class AppComponent {
 
     this.frontLetterMaterial = new THREE.MeshBasicMaterial({ color: 0x000000, wireframe: false, side: THREE.BackSide });
     this.backLetterMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: false, side: THREE.BackSide });
+  }
 
-    const webGlScreenWidth = width / 30;
-    const webGlScreenHeight = height / 30;
+  loadAdaptedGeometries = (): void => {
+    let loadingFault = (error) => {
+      error => console.log(error);
+    };
+
+    let loadingComplete = (response: Response): void => {
+      let data = response.json();
+
+      let letterGeomInComplexes: any[] = data.letterGeomInComplexes;
+      let italicLetterGeomInComplexes: any[] = data.italicLetterGeomInComplexes;
+
+      for (let j = 0; j < letterGeomInComplexes.length; j++) {
+        let regularComplexGeometry = letterGeomInComplexes[j];
+        let italicComplexGeometry = italicLetterGeomInComplexes[j];
+
+        let regularGeometry: THREE.Geometry = Complex(regularComplexGeometry);
+        let italicGeometry: THREE.Geometry = Complex(italicComplexGeometry);
+
+        this.geometries[j] = regularGeometry;
+        this.italicGeometries[j] = italicGeometry;
+      }
+      this.completeSceneGeneration();
+    }
+
+    this.http
+      .get("./assets/letter_geometries.json")
+      .subscribe(loadingComplete, loadingFault);
+  }
+
+  completeSceneGeneration = (): void => {
+    this.fillSceneWithPlates();
+    this.bindEvents();
+    this.render();
+  }
+
+  bindEvents = (): void => {
+    document.addEventListener('mousemove', this.onDocumentMouseMove, false);
+    document.addEventListener("touchstart", this.onTouchStart, false);
+    document.addEventListener("touchmove", this.onTouchMove, false);
+  }
+
+  fillSceneWithPlates = (): void => {
+    const webGlScreenWidth = this.canvasWidth / 30;
+    const webGlScreenHeight = this.canvasHeight / 30;
 
     const columnCount = Math.ceil(webGlScreenWidth / (this.cubeWidth + this.gap));
     const rowCount = Math.ceil(webGlScreenHeight / (this.cubeHeight + this.gap));
@@ -157,38 +196,45 @@ export class AppComponent {
     const fullWidth = columnCount * this.cubeWidth + (columnCount - 1) * this.gap;
     const fullHeight = rowCount * this.cubeHeight + (rowCount - 1) * this.gap;
 
-    let loadedCount = 0;
+    for (let i = 0; i < columnCount; i++) {
+      for (let j = 0; j < rowCount; j++) {
+
+        let posX = i * (this.cubeWidth + this.gap) - fullWidth / 2;
+        let posY = j * (this.cubeHeight + this.gap) - fullHeight / 2;
+
+        let cube = this.createPlateMesh();
+
+        cube.position.x = posX;
+        cube.position.y = posY;
+
+        this.scene.add(cube);
+      }
+    }
+  }
+
+  loadSvgGeometries = (exportGeometriesAfterLoad: boolean = false): void => {
     let currentPos = 0;
 
+    let letterGeomInComplexes = [];
+    let italicLetterGeomInComplexes = [];
+
     let loadComplete = () => {
+      this.completeSceneGeneration();
 
-      for (let i = 0; i < columnCount; i++) {
-        for (let j = 0; j < rowCount; j++) {
-
-          let posX = i * (this.cubeWidth + this.gap) - fullWidth / 2;
-          let posY = j * (this.cubeHeight + this.gap) - fullHeight / 2;
-
-          let cube = this.createPlateMesh();
-
-          cube.position.x = posX;
-          cube.position.y = posY;
-
-          this.scene.add(cube);
-        }
+      if (exportGeometriesAfterLoad) {
+        var geometryData = {
+          letterGeomInComplexes: letterGeomInComplexes,
+          italicLetterGeomInComplexes: italicLetterGeomInComplexes
+        };
+        let rawGeometryJson = JSON.stringify(geometryData);
+        this.download(`letter_geometries.json`, rawGeometryJson);
       }
-
-      document.addEventListener('mousemove', this.onDocumentMouseMove, false);
-      document.addEventListener("touchstart", this.onTouchStart, false);
-      document.addEventListener("touchmove", this.onTouchMove, false);
-
-      this.render();
     };
+
 
     let loadSymbol = (isItalic: boolean) => {
       let letter = this.availableLetters[currentPos];
-
       let letterCode = letter.charCodeAt(0);
-      // debugger;
 
       let italicText = isItalic ? "_italic" : "";
       let glyphName = `letter_${letterCode}${italicText}_converted.svg`;
@@ -206,19 +252,15 @@ export class AppComponent {
           normalize: false
         });
 
-        // let rawGeometryJson = JSON.stringify(rawGeometry);
-        // debugger;
-        // this.download(`letter_${letterCode}_converted.json`,rawGeometryJson );
-
-
         let complexGeometry: THREE.Geometry = Complex(rawGeometry);
 
         if (isItalic) {
           this.italicGeometries[currentPos] = complexGeometry;
+          letterGeomInComplexes.push(rawGeometry);
         } else {
           this.geometries[currentPos] = complexGeometry;
+          italicLetterGeomInComplexes.push(rawGeometry);
         }
-
 
         if (isItalic == false) {
           loadSymbol(true);
@@ -250,7 +292,7 @@ export class AppComponent {
     frontLetterMesh.position.z = this.cubeThick + this.cubeThick / 100;
 
     backLetterMesh.scale.set(this.fontGeomScale, this.fontGeomScale, 1);
-    backLetterMesh.position.x =  0.3;
+    backLetterMesh.position.x = 0.3;
     backLetterMesh.position.y = 0.4;
     backLetterMesh.position.z = -this.cubeThick - this.cubeThick / 100;
     backLetterMesh.rotation.y = Math.PI;
@@ -353,8 +395,7 @@ export class AppComponent {
     }
 
     let rotation = rawRotation % 360;
-
-    var gapAmplitude = 30;
+    let gapAmplitude = 30;
 
     var resultSign = Math.sign(rotation);
 
