@@ -179,6 +179,7 @@ export class AppComponent {
   }
 
   bindEvents = (): void => {
+    document.addEventListener('click', this.onDocumentMouseClick, false);
     document.addEventListener('mousemove', this.onDocumentMouseMove, false);
     document.addEventListener("touchstart", this.onTouchStart, false);
     document.addEventListener("touchmove", this.onTouchMove, false);
@@ -340,6 +341,24 @@ export class AppComponent {
     this.mouseSpeed.y = event.movementY;
   }
 
+
+  onDocumentMouseClick = (event: MouseEvent) => {
+    let coord = {
+      x: (event.clientX / window.innerWidth) * 2 - 1,
+      y: - (event.clientY / window.innerHeight) * 2 + 1
+    }
+
+
+    this.raycaster.setFromCamera(coord, this.camera);
+
+    var intersects = this.raycaster.intersectObjects(this.colliders, false);
+    if (intersects.length < 1)
+      return;
+
+    let hitPlate = intersects[0].object.parent as Plate;
+    debugger;
+  }
+
   onTouchStart = (event: TouchEvent) => {
     if (this.mouse == undefined) {
       this.mouse = new THREE.Vector2();
@@ -435,22 +454,17 @@ export class AppComponent {
         return;
 
       if (this.INTERSECTED != hitPlate) {
-        hitPlate.isInteractive = false;
-
-        this.INTERSECTED = hitPlate;
-        // (this.INTERSECTED.material as THREE.MeshLambertMaterial).color.setHex(this.activeColor);
-
-        let angleFrom = this.INTERSECTED.rotation.y;
-
+        let angleFrom = hitPlate.rotation.y;
         let angleDegFrom = angleFrom * 180 / Math.PI;
+
         let angleDegTo = this.calcNewRotationAngleFor(angleFrom);
-
         let angleTo = angleDegTo * Math.PI / 180;
-
-        // console.log("rotation: "+ rotation);
 
         if (angleDegFrom == angleDegTo)
           return;
+
+        hitPlate.isInteractive = false;
+        this.INTERSECTED = hitPlate;
 
         let obj = this.INTERSECTED;
 
@@ -458,18 +472,9 @@ export class AppComponent {
           .to({ y: angleTo }, 400)
           .on('update', object => {
             obj.rotation.y = object.y;
-          })
+          });
 
-        // tween.on("complete", () => {
-        //   let plateIsOnFrontSide = (angleDegTo > -90 && angleDegTo < 90) || Math.abs(angleDegTo) > 270;
-        //
-        //   if (plateIsOnFrontSide)
-        //     debugger;
-        //   hitPlate.isInteractive = plateIsOnFrontSide;
-        // })
         tween.start();
-
-
       }
 
     } else {

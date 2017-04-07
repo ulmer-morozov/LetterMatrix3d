@@ -179,6 +179,7 @@ var AppComponent = (function () {
             _this.render();
         };
         this.bindEvents = function () {
+            document.addEventListener('click', _this.onDocumentMouseClick, false);
             document.addEventListener('mousemove', _this.onDocumentMouseMove, false);
             document.addEventListener("touchstart", _this.onTouchStart, false);
             document.addEventListener("touchmove", _this.onTouchMove, false);
@@ -307,6 +308,18 @@ var AppComponent = (function () {
             _this.mouseSpeed.x = event.movementX;
             _this.mouseSpeed.y = event.movementY;
         };
+        this.onDocumentMouseClick = function (event) {
+            var coord = {
+                x: (event.clientX / window.innerWidth) * 2 - 1,
+                y: -(event.clientY / window.innerHeight) * 2 + 1
+            };
+            _this.raycaster.setFromCamera(coord, _this.camera);
+            var intersects = _this.raycaster.intersectObjects(_this.colliders, false);
+            if (intersects.length < 1)
+                return;
+            var hitPlate = intersects[0].object.parent;
+            debugger;
+        };
         this.onTouchStart = function (event) {
             if (_this.mouse == undefined) {
                 _this.mouse = new __WEBPACK_IMPORTED_MODULE_2_three__["Vector2"]();
@@ -373,29 +386,20 @@ var AppComponent = (function () {
                 if (hitPlate.isInteractive == false)
                     return;
                 if (_this.INTERSECTED != hitPlate) {
-                    hitPlate.isInteractive = false;
-                    _this.INTERSECTED = hitPlate;
-                    // (this.INTERSECTED.material as THREE.MeshLambertMaterial).color.setHex(this.activeColor);
-                    var angleFrom = _this.INTERSECTED.rotation.y;
+                    var angleFrom = hitPlate.rotation.y;
                     var angleDegFrom = angleFrom * 180 / Math.PI;
                     var angleDegTo = _this.calcNewRotationAngleFor(angleFrom);
                     var angleTo = angleDegTo * Math.PI / 180;
-                    // console.log("rotation: "+ rotation);
                     if (angleDegFrom == angleDegTo)
                         return;
+                    hitPlate.isInteractive = false;
+                    _this.INTERSECTED = hitPlate;
                     var obj_1 = _this.INTERSECTED;
                     var tween = new TWEEN.Tween({ y: angleFrom })
                         .to({ y: angleTo }, 400)
                         .on('update', function (object) {
                         obj_1.rotation.y = object.y;
                     });
-                    // tween.on("complete", () => {
-                    //   let plateIsOnFrontSide = (angleDegTo > -90 && angleDegTo < 90) || Math.abs(angleDegTo) > 270;
-                    //
-                    //   if (plateIsOnFrontSide)
-                    //     debugger;
-                    //   hitPlate.isInteractive = plateIsOnFrontSide;
-                    // })
                     tween.start();
                 }
             }
