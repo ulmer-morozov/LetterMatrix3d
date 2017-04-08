@@ -42,7 +42,7 @@ var config = {
       },
       {
         test: /\.(jpe?g|gif|png|svg|woff|ttf|wav|mp3|ico)$/,
-        loader: "file-loader?name=/assets/[name].[ext]",
+        loader: "file-loader",
         query: {
           useRelativePath: process.env.NODE_ENV === "production"
         }

@@ -8,9 +8,9 @@ let TWEEN = require('./assets/Tween.js');
 let Complex = require('three-simplicial-complex')(THREE)
 
 var flipSound = require("./assets/flip.mp3");
-require("./favicon.ico")
-require("./favicon-16x16.png")
-require("./favicon-32x32.png")
+require("file-loader?name=favicon.ico!./favicon.ico")
+require("file-loader?name=favicon-16x16.png!./favicon-16x16.png")
+require("file-loader?name=favicon-32x32.png!./favicon-32x32.png")
 
 /* Code */
 
