@@ -8,6 +8,9 @@ let TWEEN = require('./assets/Tween.js');
 let Complex = require('three-simplicial-complex')(THREE)
 
 var flipSound = require("./assets/flip.mp3");
+require("./favicon.ico")
+require("./favicon-16x16.png")
+require("./favicon-32x32.png")
 
 /* Code */
 
@@ -56,12 +59,12 @@ export default class AppComponent {
 
   private canvasWidth: number;
   private canvasHeight: number;
+  private lastFlipSoundPlayed = 0;
 
   private minZoom = 1;
   private maxZoom = 10;
   private currentZoom = 1;
   private zoomStep = 0.05;
-
   private availableLetters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZабвгдеёжзийклмнопрстуфхцчшщъыьэюяАБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ";
 
   constructor() {
@@ -276,28 +279,6 @@ export default class AppComponent {
     this.currentZoom = newZoomLevel;
     this.camera.zoom = this.currentZoom;
     this.camera.updateProjectionMatrix();
-
-    // debugger;
-
-    // if (this.zoomTween != undefined && this.zoomTween.isPlaying())
-    //     this.zoomTween.stop();
-    //
-    // this.zoomTween = new TWEEN.Tween({ zoomLevel: this.currentZoom })
-    //     .to({ zoomLevel: newZoomLevel }, 300)
-    //     .on('update', obj => {
-    //         this.currentZoom = obj.zoomLevel;
-    //         // console.log("currentZoom " + this.currentZoom);
-    //
-    //         // this.camera.position.set(0, 0, 60 / this.currentZoom);
-    //         this.camera.zoom = this.currentZoom;
-    //         this.camera.updateProjectionMatrix();
-    //
-    //         // const cameraFactor = 60;
-    //         // this.camera. = new THREE.OrthographicCamera(-this.canvasWidth / cameraFactor, this.canvasWidth / cameraFactor, this.canvasHeight / cameraFactor, -this.canvasHeight / cameraFactor, 0, 100);
-    //     });
-    // this.zoomTween.easing(TWEEN.Easing.Cubic.In)
-    //
-    // this.zoomTween.start();
   }
 
   onDocumentMouseClick = (event: MouseEvent) => {
@@ -444,10 +425,16 @@ export default class AppComponent {
           .on('update', object => {
             obj.rotation.y = object.y;
           });
-
         tween.start();
-        var audio = new Audio(flipSound);
-        audio.play();
+
+        let audioPlayedDelay = Date.now() - this.lastFlipSoundPlayed;
+        if (audioPlayedDelay > 100) {
+          var audio = new Audio(flipSound);
+          audio.play();
+          this.lastFlipSoundPlayed = Date.now();
+        }
+
+
       }
 
     } else {

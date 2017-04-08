@@ -41,7 +41,7 @@ var config = {
         loader: "json-loader"
       },
       {
-        test: /\.(jpe?g|gif|png|svg|woff|ttf|wav|mp3)$/,
+        test: /\.(jpe?g|gif|png|svg|woff|ttf|wav|mp3|ico)$/,
         loader: "file-loader?name=/assets/[name].[ext]",
         query: {
           useRelativePath: process.env.NODE_ENV === "production"
