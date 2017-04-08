@@ -1,15 +1,58 @@
-# Lettermatrix3d
+# Typescript Webpack Starter
+[![Build Status](https://travis-ci.org/emyann/typescript-webpack-starter.svg?branch=develop)](https://travis-ci.org/emyann/typescript-webpack-starter)
+>A damn simple ES6 and Typescript Starter kit using webpack for packaging. Perfect for bootstraping your javascript project regardless any framework.
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.0.0-rc.4.
+## Built upon
 
-## Development server
+- [x] [Webpack 2](https://webpack.github.io/docs/roadmap.html#2)
+- [x] [Typescript 2](https://blogs.msdn.microsoft.com/typescript/2016/07/11/announcing-typescript-2-0-beta/)
+- [x] [Webpack Dashboard](https://github.com/FormidableLabs/webpack-dashboard)
+![Imgur](http://i.imgur.com/pETTX85.png)
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+# Getting started
 
-## Code scaffolding
+## Clone Typescript Webpack Starter
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive/pipe/service/class/module`.
+```bash
+git clone https://github.com/emyann/typescript-webpack-starter.git
+cd typescript-webpack-starter
+# Install the dependencies
+npm install
+```
 
-## Build
+## Run
 
-Run `ng build --base-href /LetterMatrix3d/Explore/` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `-prod` flag for a production build.
+Start a Webpack dev server 
+```bash
+npm start
+```
+And go to this URL: `http://localhost:3000` - 🎉
+
+Start a Webpack server with the production configuration 
+```bash
+npm run server:prod
+```
+
+
+## Build Only
+Build a development release
+```bash
+npm run build
+```
+
+
+Build a production release
+```bash
+npm run build:prod
+```
+After build phase, 3 files are generated into the `dist` folder:
+- `app.bundle.js` - contains the core of the application. From the entry point `src/index.ts`
+- `vendor.bundle.js` - contains the vendor dependencies
+- `index.html` - html page with references to the 2 files above
+
+## TODO
+
+- [ ] Add TODO example
+- [ ] Setup VSCode debug to match webpack-dev-server
+- [ ] Setup a webpack common configuration and use webpack-merge
+- [ ] Setup unit tests with Jasmine / Karma

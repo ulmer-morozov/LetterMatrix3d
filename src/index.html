@@ -1,26 +1,36 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="">
 
 <head>
-  <meta charset="utf-8">
-  <title>Lettermatrix3d</title>
-  <base href="/">
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="icon" type="image/png" href="favicon-32x32.png" sizes="32x32" />
+    <link rel="icon" type="image/png" href="favicon-16x16.png" sizes="16x16" />
 
-  <style>
-    body {
-      padding: 0;
-      margin: 0;
-    }
-  </style>
+    <title>LetterMatrix | MenoeGrotesque | type.today</title>
+    <!-- <meta name="description" content="<%= htmlWebpackPlugin.options.title %>"> -->
+
+    <style>
+        body {
+            padding: 0;
+            margin: 0;
+            overflow: hidden;
+            -webkit-overflow-scrolling: touch
+        }
+
+        canvas {
+            height: 100vh;
+            width: 100vw;
+            display: block;
+        }
+    </style>
 </head>
 
 <body>
-  <app-root>Loading...</app-root>
-
-  <script src="assets/Tween.js"></script>
+    <canvas id="canvas"></canvas>
 </body>
 
 </html>
