@@ -8,7 +8,7 @@ let TWEEN = require('./assets/Tween.js');
 let Complex = require('three-simplicial-complex')(THREE)
 
 var flipSound = require("./assets/flip.mp3");
-require("file-loader?name=favicon.ico!./favicon.ico")
+// require("file-loader?name=favicon.ico!./favicon.ico")
 require("file-loader?name=favicon-16x16.png!./favicon-16x16.png")
 require("file-loader?name=favicon-32x32.png!./favicon-32x32.png")
 
@@ -162,21 +162,58 @@ export default class AppComponent {
   }
 
   bindEvents = (): void => {
-    document.addEventListener('click', this.onDocumentMouseClick, false);
-    document.addEventListener('mousemove', this.onDocumentMouseMove, false);
-    document.addEventListener("touchstart", this.onTouchStart, false);
-    document.addEventListener("touchmove", this.onTouchMove, false);
+    this.canvas.addEventListener('click', this.onDocumentMouseClick, false);
+    this.canvas.addEventListener('mousemove', this.onDocumentMouseMove, false);
+    this.canvas.addEventListener("touchstart", this.onTouchStart, false);
+    this.canvas.addEventListener("touchmove", this.onTouchMove, false);
 
     if ('onwheel' in document) {
       // IE9+, FF17+, Ch31+
-      document.addEventListener("wheel", this.onWheel);
+      this.canvas.addEventListener("wheel", this.onWheel);
     } else if ('onmousewheel' in document) {
       // устаревший вариант события
-      document.addEventListener("mousewheel", this.onWheel);
+      this.canvas.addEventListener("mousewheel", this.onWheel);
     } else {
       // Firefox < 17
-      document.addEventListener("MozMousePixelScroll", this.onWheel);
+      this.canvas.addEventListener("MozMousePixelScroll", this.onWheel);
     }
+
+    //links
+    document.getElementById("dmitry").addEventListener("click", () => this.openLink("https://www.facebook.com/dmitry.ulmermorozov"));
+    document.getElementById("maria").addEventListener("click", () => this.openLink("https://www.facebook.com/mmmirzametova"));
+    document.getElementById("alexandr").addEventListener("click", () => this.openLink("https://www.facebook.com/nobodyroo"));
+    document.getElementById("vadim").addEventListener("click", () => this.openLink("https://www.facebook.com/mirumirg"));
+    document.getElementById("type-today-logo").addEventListener("click", () => this.openLink("https://type.today/ru/menoe"));
+
+    let aboutEl = document.getElementById("about");
+
+    document.getElementById("byInteractopusButton").addEventListener("click", () => {
+      aboutEl.style.display = 'block';
+    });
+
+    document.getElementById("close-about-button").addEventListener("click", () => {
+      aboutEl.style.display = 'none';
+    });
+
+    document.getElementById("clearButton").addEventListener("click", this.clearRotations);
+
+
+  }
+
+  clearRotations = (): void => {
+    let colladers = this.colliders;
+    let plate: Plate;
+    for (let j = 0; j < colladers.length; j++) {
+      plate = colladers[j].parent as Plate;
+      plate.rotation.y = 0;
+      plate.isInteractive = true;
+      // debugger;
+    }
+  }
+
+  openLink = (url: string): void => {
+    let win = window.open(url, "_blank");
+    win.focus();
   }
 
   fillSceneWithPlates = (): void => {
@@ -249,15 +286,19 @@ export default class AppComponent {
   }
 
   onDocumentMouseMove = (event: MouseEvent) => {
-    if (this.mouse == undefined) {
+    if (this.mouse == undefined)
       this.mouse = new THREE.Vector2();
-    }
-    event.preventDefault();
-    this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-    this.mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
 
-    this.mouseSpeed.x = event.movementX;
-    this.mouseSpeed.y = event.movementY;
+    let newMouseX = (event.clientX / window.innerWidth) * 2 - 1;
+    let newMouseY = - (event.clientY / window.innerHeight) * 2 + 1;
+
+    this.mouseSpeed.x = newMouseX - this.mouse.x;
+    this.mouseSpeed.y = newMouseY - this.mouse.y;
+
+    this.mouse.x = newMouseX;
+    this.mouse.y = newMouseY;
+
+    event.preventDefault();
   }
 
   onWheel = (event: WheelEvent) => {
@@ -339,8 +380,8 @@ export default class AppComponent {
     this.mouseSpeed.x = this.lastTouch.x - this.mouse.x;
     this.mouseSpeed.y = this.lastTouch.y - this.mouse.y;
 
-    this.lastTouch.x = (touchMoveEvent.clientX / window.innerWidth) * 2 - 1;
-    this.lastTouch.y = (touchMoveEvent.clientY / window.innerHeight) * 2 + 1;
+    this.lastTouch.x = this.mouse.x;
+    this.lastTouch.y = this.mouse.y;
   }
 
 

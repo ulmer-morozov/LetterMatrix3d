@@ -41,7 +41,7 @@ var config = {
         loader: "json-loader"
       },
       {
-        test: /\.(jpe?g|gif|png|svg|woff|ttf|wav|mp3|ico)$/,
+        test: /\.(jpe?g|gif|png|svg|woff|ttf|wav|mp3)$/,
         loader: "file-loader",
         query: {
           useRelativePath: process.env.NODE_ENV === "production"
@@ -61,7 +61,8 @@ var config = {
     }),
     new HtmlWebpackPlugin({
       title: 'Typescript Webpack Starter',
-      template: '!!ejs-loader!src/index.html'
+      template: '!!ejs-loader!src/index.html',
+      favicon: 'favicon.ico'
     }),
     new webpack.optimize.CommonsChunkPlugin({
       name: 'vendor',
