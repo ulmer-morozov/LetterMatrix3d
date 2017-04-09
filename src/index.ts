@@ -292,11 +292,14 @@ export default class AppComponent {
     let newMouseX = (event.clientX / window.innerWidth) * 2 - 1;
     let newMouseY = - (event.clientY / window.innerHeight) * 2 + 1;
 
-    this.mouseSpeed.x = newMouseX - this.mouse.x;
-    this.mouseSpeed.y = newMouseY - this.mouse.y;
+    this.mouseSpeed.x = Math.round(350 * (newMouseX - this.mouse.x));
+    this.mouseSpeed.y = Math.round(350 * (newMouseY - this.mouse.y));
 
     this.mouse.x = newMouseX;
     this.mouse.y = newMouseY;
+
+    // console.log("speed " + this.mouseSpeed.x);
+    // console.log("movementX " + event.movementX);
 
     event.preventDefault();
   }
