@@ -18,13 +18,13 @@
       padding: 0;
       margin: 0;
       overflow: hidden;
-      -webkit-overflow-scrolling: touch
+      -webkit-overflow-scrolling: touch;
+      background-color: black;
     }
 
     canvas {
       height: 100vh;
       width: 100vw;
-      display: block;
     }
 
     .top-menu {
@@ -34,6 +34,7 @@
       right: 0;
       height: 50px;
       background-color: black;
+      z-index: 3000;
     }
 
     #type-today-logo {
@@ -98,66 +99,76 @@
       fill: #000000; //чтобы по всей области группы срабатывали события наведения мышки
     }
 
+    .hidden-at-start {
+      /*display: none;*/
+      opacity: 0;
+    }
     /*PACE JS*/
+
+    body.pace-done .hidden-at-start {
+      /*display: inherit;*/
+      opacity: 1;
+      -webkit-transition: opacity 1s ease-in-out;
+      -moz-transition: opacity 1s ease-in-out;
+      -ms-transition: opacity 1s ease-in-out;
+      -o-transition: opacity 1s ease-in-out;
+      transition: opacity 1s ease-in-out;
+    }
+
     .pace {
-    -webkit-pointer-events: none;
-    pointer-events: none;
+      -webkit-pointer-events: none;
+      pointer-events: none;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      user-select: none;
+      z-index: 2000;
+      position: fixed;
+      margin: auto;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 5px;
+      width: 200px;
+      background: #fff;
+      /*border: 1px solid #2d;*/
+      overflow: hidden;
+    }
 
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    user-select: none;
+    .pace .pace-progress {
+      -webkit-box-sizing: border-box;
+      -moz-box-sizing: border-box;
+      -ms-box-sizing: border-box;
+      -o-box-sizing: border-box;
+      box-sizing: border-box;
+      -webkit-transform: translate3d(0, 0, 0);
+      -moz-transform: translate3d(0, 0, 0);
+      -ms-transform: translate3d(0, 0, 0);
+      -o-transform: translate3d(0, 0, 0);
+      transform: translate3d(0, 0, 0);
+      max-width: 200px;
+      position: fixed;
+      z-index: 2000;
+      display: block;
+      position: absolute;
+      top: 0;
+      right: 100%;
+      height: 100%;
+      width: 100%;
+      background: white;
+    }
 
-    z-index: 2000;
-    position: fixed;
-    margin: auto;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: 5px;
-    width: 200px;
-    background: #fff;
-    border: 1px solid #29d;
-
-    overflow: hidden;
-  }
-
-  .pace .pace-progress {
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    -ms-box-sizing: border-box;
-    -o-box-sizing: border-box;
-    box-sizing: border-box;
-
-    -webkit-transform: translate3d(0, 0, 0);
-    -moz-transform: translate3d(0, 0, 0);
-    -ms-transform: translate3d(0, 0, 0);
-    -o-transform: translate3d(0, 0, 0);
-    transform: translate3d(0, 0, 0);
-
-    max-width: 200px;
-    position: fixed;
-    z-index: 2000;
-    display: block;
-    position: absolute;
-    top: 0;
-    right: 100%;
-    height: 100%;
-    width: 100%;
-    background: #29d;
-  }
-
-  .pace.pace-inactive {
-    display: none;
-  }
+    .pace.pace-inactive {
+      display: none;
+    }
   </style>
 </head>
 
 <body>
-  <div class="top-menu">
+  <div class="top-menu hidden-at-start">
 
     <!-- Close -->
-    <svg id="clearButton" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 78 26.3" xml:space="preserve">
+    <svg id="clearButton" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 78 26.3" xml:space="preserve" >
     <g>
     	<path d="M13.2,7.2c-0.4-3-2.3-4.9-4.6-4.9c-2.8,0-4.7,2.7-4.7,6.6c0,4.1,1.9,6.8,4.7,6.8c2.3,0,4-1.7,4.5-4.4l1.8,1.2
     		c-0.9,3.2-3.3,5.2-6.3,5.2c-4.1,0-6.8-3.5-6.8-8.8c0-5.2,2.7-8.6,6.8-8.6c3.3,0,5.8,2.3,6.6,6L13.2,7.2z"/>
@@ -437,7 +448,7 @@
     </g>
   </svg>
 
-  <canvas id="canvas"></canvas>
+  <canvas id="canvas" class="hidden-at-start"></canvas>
   <script type="text/javascript" src="./pace.min.js"></script>
 </body>
 
