@@ -102,6 +102,7 @@
     .hidden-at-start {
       /*display: none;*/
       opacity: 0;
+      pointer-events: none;
     }
     /*PACE JS*/
 
@@ -113,6 +114,7 @@
       -ms-transition: opacity 1s ease-in-out;
       -o-transition: opacity 1s ease-in-out;
       transition: opacity 1s ease-in-out;
+      pointer-events: auto;
     }
 
     .pace {
@@ -168,7 +170,7 @@
   <div class="top-menu hidden-at-start">
 
     <!-- Close -->
-    <svg id="clearButton" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 78 26.3" xml:space="preserve" >
+    <svg id="clearButton" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 78 26.3" xml:space="preserve">
     <g>
     	<path d="M13.2,7.2c-0.4-3-2.3-4.9-4.6-4.9c-2.8,0-4.7,2.7-4.7,6.6c0,4.1,1.9,6.8,4.7,6.8c2.3,0,4-1.7,4.5-4.4l1.8,1.2
     		c-0.9,3.2-3.3,5.2-6.3,5.2c-4.1,0-6.8-3.5-6.8-8.8c0-5.2,2.7-8.6,6.8-8.6c3.3,0,5.8,2.3,6.6,6L13.2,7.2z"/>
