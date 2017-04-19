@@ -3,11 +3,12 @@ declare function require(path: string): any;
 import * as THREE from 'three';
 import { Plate } from "./plate";
 import { BrowserDetector } from "./browserDetector";
+import { Howl }  from 'howler';
 
 let TWEEN = require('./assets/Tween.js');
 let Complex = require('three-simplicial-complex')(THREE)
 
-var flipSound = require("./assets/flip.mp3");
+var flipSoundPath = require("./assets/flip.mp3");
 // require("file-loader?name=favicon.ico!./favicon.ico")
 require("file-loader?name=favicon-16x16.png!./favicon-16x16.png")
 require("file-loader?name=favicon-32x32.png!./favicon-32x32.png")
@@ -68,9 +69,15 @@ export default class AppComponent {
   private zoomStep = 0.05;
   private availableLetters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZабвгдеёжзийклмнопрстуфхцчшщъыьэюяАБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ";
 
+  private plateSound: Howl;
+
   constructor() {
     this.canvas = document.getElementById('canvas') as HTMLCanvasElement;
     this.init();
+
+    this.plateSound = new Howl({
+      src: [flipSoundPath]
+    });
   }
 
   init = (): void => {
@@ -354,8 +361,7 @@ export default class AppComponent {
       });
 
     tween.start();
-    var audio = new Audio(flipSound);
-    audio.play();
+    this.plateSound.play();
   }
 
   onTouchStart = (event: TouchEvent) => {
@@ -474,8 +480,7 @@ export default class AppComponent {
 
         let audioPlayedDelay = Date.now() - this.lastFlipSoundPlayed;
         if (audioPlayedDelay > 100) {
-          var audio = new Audio(flipSound);
-          audio.play();
+          this.plateSound.play();
           this.lastFlipSoundPlayed = Date.now();
         }
 

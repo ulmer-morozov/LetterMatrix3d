@@ -41,6 +41,7 @@
     "webpack-dev-server": "2.2.0"
   },
   "dependencies": {
+    "@types/howler": "^2.0.2",
     "@types/three": "^0.84.3",
     "@types/tweenjs": "^0.6.27",
     "lodash": "^4.17.4"
