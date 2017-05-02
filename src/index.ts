@@ -65,8 +65,9 @@ export default class AppComponent {
 
   private minZoom = 1;
   private maxZoom = 10;
-  private currentZoom = 1;
-  private zoomStep = 0.05;
+  private zoomStep = 0.025;
+  private normZoom = 0;
+
   private availableLetters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZабвгдеёжзийклмнопрстуфхцчшщъыьэюяАБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ";
 
   private plateSound: Howl;
@@ -313,23 +314,29 @@ export default class AppComponent {
   }
 
   onWheel = (event: WheelEvent) => {
+    let deltaY = Math.sign(event.deltaY);//event.deltaY;// Math.abs(event.deltaY);
+    let newNormZoom = (this.normZoom + deltaY * this.zoomStep);
 
-    let newZoomLevel = this.currentZoom + event.deltaY * this.zoomStep;
-    newZoomLevel = Math.round(newZoomLevel * 10) / 10;
+    newNormZoom = Math.round(newNormZoom * 1000) / 1000;
 
-    if (newZoomLevel < this.minZoom)
-      newZoomLevel = this.minZoom;
+    if (newNormZoom < 0)
+      newNormZoom = 0;
 
-    if (newZoomLevel > this.maxZoom)
-      newZoomLevel = this.maxZoom;
+    if (newNormZoom > 1)
+      newNormZoom = 1;
 
-    if (newZoomLevel == this.currentZoom)
+    if (newNormZoom == this.normZoom)
       return;
 
-    console.log("currentZoom " + this.currentZoom);
+    this.normZoom = newNormZoom;
 
-    this.currentZoom = newZoomLevel;
-    this.camera.zoom = this.currentZoom;
+    let easingFunc = (t: number): number => { return t * t * t };
+    let newZoomLevel = this.minZoom + easingFunc(newNormZoom) * (this.maxZoom - this.minZoom);
+
+    newZoomLevel = Math.round(newZoomLevel * 10) / 10;
+    console.log("normZoom " + this.normZoom + " | zoom  " + newZoomLevel);
+
+    this.camera.zoom = newZoomLevel;
     this.camera.updateProjectionMatrix();
   }
 
