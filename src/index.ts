@@ -65,7 +65,7 @@ export default class AppComponent {
 
   private minZoom = 1;
   private maxZoom = 10;
-  private zoomStep = 0.025;
+  private zoomStep = 0.05;
   private normZoom = 0;
 
   private availableLetters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZабвгдеёжзийклмнопрстуфхцчшщъыьэюяАБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ";
@@ -205,8 +205,6 @@ export default class AppComponent {
     });
 
     document.getElementById("clearButton").addEventListener("click", this.clearRotations);
-
-
   }
 
   clearRotations = (): void => {
