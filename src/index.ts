@@ -117,7 +117,7 @@ export default class AppComponent {
 
   setOptimalZoomStep = (): void => {
     if (BrowserDetector.isMac) {
-      this.zoomStep = 0.01;
+      this.zoomStep = 0.005;
       this.preciseZoomEnabled = true;
       console.log("mac detected");
       return;
