@@ -65,8 +65,9 @@ export default class AppComponent {
 
   private minZoom = 1;
   private maxZoom = 10;
-  private zoomStep = 0.05;
+  private zoomStep = 0.005;
   private normZoom = 0;
+  private preciseZoomEnabled = false;
 
   private availableLetters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZабвгдеёжзийклмнопрстуфхцчшщъыьэюяАБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ";
 
@@ -89,6 +90,7 @@ export default class AppComponent {
     let zoom = window.devicePixelRatio;
     let ratio = this.canvasWidth / this.canvasHeight;
 
+    this.setOptimalZoomStep();
     this.setOptimalPlateSizeByBrowser();
 
     // this.camera = new THREE.PerspectiveCamera(25, ratio, 1, 5000);
@@ -111,6 +113,17 @@ export default class AppComponent {
     this.plateCubeGeometry = new THREE.CubeGeometry(this.cubeWidth, this.cubeHeight, this.cubeThick);
     this.prepareMaterials();
     this.loadAdaptedGeometries();
+  }
+
+  setOptimalZoomStep = (): void => {
+    if (BrowserDetector.isMac) {
+      this.zoomStep = 0.01;
+      this.preciseZoomEnabled = true;
+      console.log("mac detected");
+      return;
+    }
+    this.zoomStep = 0.05;
+    this.preciseZoomEnabled = false;
   }
 
   setOptimalPlateSizeByBrowser = (): void => {
@@ -312,7 +325,13 @@ export default class AppComponent {
   }
 
   onWheel = (event: WheelEvent) => {
-    let deltaY = Math.sign(event.deltaY);//event.deltaY;// Math.abs(event.deltaY);
+    let deltaY: number;
+
+    if (this.preciseZoomEnabled)
+      deltaY = event.deltaY;
+    else
+      deltaY = Math.sign(event.deltaY);
+
     let newNormZoom = (this.normZoom + deltaY * this.zoomStep);
 
     newNormZoom = Math.round(newNormZoom * 1000) / 1000;
@@ -328,10 +347,16 @@ export default class AppComponent {
 
     this.normZoom = newNormZoom;
 
-    let easingFunc = (t: number): number => { return t * t * t };
+    let easingFunc: (t: number) => number;
+
+    if (this.preciseZoomEnabled)
+      easingFunc = t => t;
+    else
+      easingFunc = (t: number): number => { return t * t * t };
+
     let newZoomLevel = this.minZoom + easingFunc(newNormZoom) * (this.maxZoom - this.minZoom);
 
-    newZoomLevel = Math.round(newZoomLevel * 10) / 10;
+    newZoomLevel = Math.round(newZoomLevel * 100) / 100;
     console.log("normZoom " + this.normZoom + " | zoom  " + newZoomLevel);
 
     this.camera.zoom = newZoomLevel;
