@@ -32,5 +32,5 @@ export class BrowserDetector {
     return check;
   };
 
-  static isMac = (): boolean => navigator.userAgent.match(/(Macintosh)/i) ? true : false;
+  static isMac = (): boolean => navigator.platform.match(/(Mac|iPhone|iPod|iPad)/i) ? true : false;
 }
